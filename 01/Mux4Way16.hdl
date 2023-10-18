@@ -4,6 +4,7 @@
 // File name: projects/01/Mux4Way16.hdl
 
 /**
+Name: Curtis Kauer
  * 4-way 16-bit multiplexor:
  * out = a if sel == 00
  *       b if sel == 01
@@ -24,8 +25,8 @@ CHIP Mux4Way16 {
 
     //(NOT sel[0])And(NOT sel[1])AND(a)
     //NOT sel[0]And(sel[1])And(c)
-    //sel[0] AND NOT sel[1] And (B)
-    //sel[0] AND sel[1] AND (D)
+    //sel[0] AND NOT sel[1] And (b)
+    //sel[0] AND sel[1] AND (d)
 
     Mux16(a=a, b=b, sel=sel[0], out=aMUXb);
     Mux16(a=c, b=d, sel=sel[0], out=cMUXd);

@@ -4,6 +4,7 @@
 // File name: projects/01/DMux4Way.hdl
 
 /**
+Name: Curtis Kauer
  * 4-way demultiplexor:
  * {a, b, c, d} = {in, 0, 0, 0} if sel == 00
  *                {0, in, 0, 0} if sel == 01
@@ -14,6 +15,16 @@
 CHIP DMux4Way {
     IN in, sel[2];
     OUT a, b, c, d;
+
+    /*
+        ( NOT(sel[0]) AND NOT(sel[1]) )AND( in ) = {in, 0, 0, 0}
+        
+        ( (NOT(sel[0]) AND sel[1]) )AND( in ) = {0, in, 0, 0} 
+        
+        ( (sel[0]) AND NOT(sel[1]) )AND( in ) = {0, 0, in, 0}
+
+        ( (sel[0])AND(sel[1]) )AND( in ) = {0, 0, 0, in}
+    */
 
     PARTS:
     Not(in=sel[0], out=notSela);

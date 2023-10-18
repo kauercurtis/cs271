@@ -4,6 +4,7 @@
 // File name: projects/01/Mux16.hdl
 
 /**
+Name: Curtis Kauer
  * 16-bit multiplexor: 
  * for i = 0..15 out[i] = a[i] if sel == 0 
  *                        b[i] if sel == 1
@@ -12,6 +13,10 @@
 CHIP Mux16 {
     IN a[16], b[16], sel;
     OUT out[16];
+
+    /*
+        Mux x16 = Mux16
+    */
 
     PARTS:
     Mux(a=a[0], b=b[0], sel=sel, out=out[0]);

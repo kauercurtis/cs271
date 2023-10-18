@@ -4,6 +4,7 @@
 // File name: projects/01/And.hdl
 
 /**
+Name: Curtis Kauer
  * And gate: 
  * out = 1 if (a == 1 and b == 1)
  *       0 otherwise
@@ -12,6 +13,10 @@
 CHIP And {
     IN a, b;
     OUT out;
+
+    /*
+        (a Nand b)Nand(a Nand b) = AND 
+    */
 
     PARTS:
     Nand(a=a, b=b, out=nanda);

@@ -4,6 +4,7 @@
 // File name: projects/01/Mux.hdl
 
 /** 
+Name: Curtis Kauer
  * Multiplexor:
  * out = a if sel == 0
  *       b otherwise
@@ -13,13 +14,16 @@ CHIP Mux {
     IN a, b, sel;
     OUT out;
 
+    /*
+        (sel AND (a AND b) OR (NOT(a) AND b))) XOR (NOT(sel) AND ( a AND NOT(b) OR (a AND b)) = MUX
+    */
+
     PARTS:
     And(a=a, b=b, out=aAndb);
     Not(in=a, out=nota);
     And(a=nota, b=b, out=bAndNota);
     Or(a=aAndb, b=bAndNota, out=aAndbORbAndNota);
     And(a=sel, b=aAndbORbAndNota, out=andSel);
-    
     Not(in=b, out=notb);
     And(a=a, b=notb, out=aAndNotb);
     Or(a=aAndNotb, b=aAndb, out=aAndNotbORaAndb);

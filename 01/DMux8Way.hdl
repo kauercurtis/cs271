@@ -4,6 +4,7 @@
 // File name: projects/01/DMux8Way.hdl
 
 /**
+Name: Curtis Kauer
  * 8-way demultiplexor:
  * {a, b, c, d, e, f, g, h} = {in, 0, 0, 0, 0, 0, 0, 0} if sel == 000
  *                            {0, in, 0, 0, 0, 0, 0, 0} if sel == 001
@@ -14,6 +15,26 @@
 CHIP DMux8Way {
     IN in, sel[3];
     OUT a, b, c, d, e, f, g, h;
+
+    /*
+    
+        ( NOT(sel[0]) AND NOT(sel[1]) )AND( NOT(sel[2]) ) AND (in) = a (000)
+        
+        ( (NOT(sel[0]) AND sel[1]) )AND( NOT(sel[2]) )  AND (in) = c (010)
+        
+        ( (sel[0]) AND NOT(sel[1]) )AND( NOT(sel[2]) ) AND (in) = b (001)
+
+        ( (sel[0])AND(sel[1]) )AND( NOT(sel[2]) ) AND (in) = d (011)
+
+        ( NOT(sel[0]) AND NOT(sel[1]) ) AND (sel[2]) ) AND (in) = e (100)
+
+        ( (sel[0]) AND NOT(sel[1]) )AND( sel[2] ) AND (in) = f (101)
+
+        ( (NOT(sel[0]) AND sel[1]) )AND( sel[2] ) AND (in)= g (110)
+
+        ( (sel[0])AND(sel[1]) )AND( sel[2] ) AND (in) = h (111)
+
+    */
 
     PARTS:
     Not(in=sel[0], out=notSela);

@@ -4,6 +4,7 @@
 // File name: projects/01/Not.hdl
 
 /**
+Name: Curtis Kauer
  * Not gate:
  * out = not in
  */
@@ -13,5 +14,9 @@ CHIP Not {
     OUT out;
 
     PARTS:
+
+    /*
+       (in Nand in) = NOT 
+    */
     Nand(a=in, b=in, out=out);
 }

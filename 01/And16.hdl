@@ -4,6 +4,7 @@
 // File name: projects/01/And16.hdl
 
 /**
+Name: Curtis Kauer
  * 16-bit bitwise And:
  * for i = 0..15: out[i] = (a[i] and b[i])
  */
@@ -11,6 +12,10 @@
 CHIP And16 {
     IN a[16], b[16];
     OUT out[16];
+
+    /*
+        ANDx16 = AND16
+    */
 
     PARTS:
     And(a=a[0], b=b[0], out=out[0]);

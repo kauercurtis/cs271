@@ -4,6 +4,7 @@
 // File name: projects/01/DMux.hdl
 
 /**
+Name: Curtis Kauer
  * Demultiplexor:
  * {a, b} = {in, 0} if sel == 0
  *          {0, in} if sel == 1
@@ -12,6 +13,11 @@
 CHIP DMux {
     IN in, sel;
     OUT a, b;
+
+    /*
+        (Not(in))AND(in) = {in, 0}
+        (in)AND(sel) = {0, in}
+    */
 
     PARTS:
     Not(in=sel, out=notSel);

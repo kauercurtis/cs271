@@ -4,6 +4,7 @@
 // File name: projects/01/Not16.hdl
 
 /**
+Name: Curtis Kauer
  * 16-bit Not:
  * for i=0..15: out[i] = not in[i]
  */
@@ -11,6 +12,10 @@
 CHIP Not16 {
     IN in[16];
     OUT out[16];
+
+    /*
+        Not x16 = Not16
+    */
 
     PARTS:
     Not(in=in[0], out=out[0]);

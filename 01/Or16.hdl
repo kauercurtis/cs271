@@ -4,6 +4,7 @@
 // File name: projects/01/Or16.hdl
 
 /**
+Name: Curtis Kauer
  * 16-bit bitwise Or:
  * for i = 0..15 out[i] = (a[i] or b[i])
  */
@@ -11,6 +12,10 @@
 CHIP Or16 {
     IN a[16], b[16];
     OUT out[16];
+
+    /*
+        Or x16 = Or16
+    */
 
     PARTS:
     Or(a=a[0], b=b[0], out=out[0]);
