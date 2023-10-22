@@ -1,0 +1,23 @@
+[0001]// This file is part of www.nand2tetris.org
+[0002]// and the book "The Elements of Computing Systems"
+[0003]// by Nisan and Schocken, MIT Press.
+[0004]// File name: projects/06/max/MaxL.asm
+[0005]
+[0006]// Symbol-less version of the Max.asm program.
+[0007]
+[0008]@0
+[0009]D=M
+[0010]@1
+[0011]D=D-M
+[0012]@10
+[0013]D;JGT
+[0014]@1
+[0015]D=M
+[0016]@12
+[0017]0;JMP
+[0018]@0
+[0019]D=M
+[0020]@2
+[0021]M=D
+[0022]@14
+[0023]0;JMP

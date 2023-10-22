@@ -1,0 +1,13 @@
+[0001]// This file is part of www.nand2tetris.org
+[0002]// and the book "The Elements of Computing Systems"
+[0003]// by Nisan and Schocken, MIT Press.
+[0004]// File name: projects/06/add/Add.asm
+[0005]
+[0006]// Computes R0 = 2 + 3  (R0 refers to RAM[0])
+[0007]
+[0008]@2
+[0009]D=A
+[0010]@3
+[0011]D=D+A
+[0012]@0
+[0013]M=D

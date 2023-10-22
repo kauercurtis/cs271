@@ -4,6 +4,7 @@
 // File name: projects/02/FullAdder.hdl
 
 /**
+Name: Curtis Kauer
  * Computes the sum of three bits.
  */
 
@@ -12,6 +13,16 @@ CHIP FullAdder {
     OUT sum,     // Right bit of a + b + c
         carry;   // Left bit of a + b + c
 
+    /*
+        FullAdder = HalfAdder + HalfAdder + Xor
+    */
+
     PARTS:
-    // Put you code here:
+    
+    HalfAdder(a=a, b=b, sum=aAndbSum, carry=aCarryb);
+    
+    HalfAdder(a=aAndbSum, b=c, sum=sum, carry=finalCarry);
+
+    Xor(a=aCarryb, b=finalCarry, out=carry);
+
 }

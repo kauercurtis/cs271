@@ -4,6 +4,7 @@
 // File name: projects/02/ALU.hdl
 
 /**
+Name: Curtis Kauer
  * The ALU (Arithmetic Logic Unit).
  * Computes one of the following functions:
  * x+y, x-y, y-x, 0, 1, -1, x, y, -x, -y, !x, !y,
@@ -28,7 +29,7 @@
 
 CHIP ALU {
     IN  
-        x[16], y[16],  // 16-bit inputs        
+        x[16], y[16],// 16-bit inputs        
         zx, // zero the x input?
         nx, // negate the x input?
         zy, // zero the y input?
@@ -42,5 +43,77 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-   // Put you code here:
+        
+        //check if x is to be zeroed
+        And(a=zx, b=zx, out=zeroX);
+
+        //to zero x (subtracting x from itself)
+        Not16(in=x[0..15], out=xDifference);
+        //x is now the maximum 16 bit Number (1111 1111 1111 1111)
+        Add16(a=x[0..15], b=xDifference, out=maxX);
+        //increment by 1 to get a zero 16 bit Number (0000 0000 0000 0000)
+        Inc16(in=maxX, out=zeroedX);
+        //let mux determine if we keep the original x value or zeroed x
+        Mux16(a=x[0..15], b=zeroedX, sel=zeroX, out=newX);
+
+        //check if y is to be zeroed
+        And(a=zy, b=zy, out=zeroY);
+
+        //to zero y (subtracting y from itself)
+        Not16(in=y[0..15], out=yDifference);
+        //y is now the maximum 16 bit Number (1111 1111 1111 1111)
+        Add16(a=y[0..15], b=yDifference, out=maxY);
+        //increment by 1 to get a zero 16 bit Number (0000 0000 0000 0000)
+        Inc16(in=maxY, out=zeroedY);
+        //let mux determine if we keep original y value or zeroed y
+        Mux16(a=y[0..15], b=zeroedY, sel=zeroY, out=newY);
+
+        //x variable = newX
+        //y variable = newY
+
+        //check if negate x
+        And(a=nx, b=nx, out=negateX);
+        Not16(in=newX, out=negatedX);
+        //let mux determine if we keep x value from zx or do we keep the negatedX
+        Mux16(a=newX, b=negatedX, sel=negateX, out=newerX); 
+        
+        //check if negate y
+        And(a=ny, b=ny, out=negateY);
+        Not16(in=newY, out=negatedY);
+        //let mux determine if we keep y value from zy or do we keep the negatedY
+        Mux16(a=newY, b=negatedY, sel=negateY, out=newerY);
+
+        //x variable = newerX
+        //y variable = newerY
+
+        //check if computing AND or +
+        And(a=f, b=f, out=computation);
+        
+        //The two operations that depend on f
+        Add16(a=newerX, b=newerY, out=additionOutput);
+        And16(a=newerX, b=newerY, out=andOutput);
+        //let mux determine if we keep addition value or the and output
+        Mux16(a=andOutput, b=additionOutput, sel=computation, out=output);
+
+        //check if negating output
+        And(a=no, b=no, out=negation);
+        Not16(in=output, out=negativeOutput);
+        //let mux determine if we output the negation
+        Mux16(a=output, b=negativeOutput, sel=negation, out=out);        
+        
+        //zr        
+        //check if we used negativeOutput or output
+        //if negation = 1, negativeOutput
+        Mux16(a=output, b=negativeOutput, sel=negation, out=outputZr, out[0..7]=firstHalf, out[8..15]=secondHalf, out[15]=lastBit);
+
+        //convert 16 bits to single bit
+        Or8Way(in=firstHalf, out=first);
+        Or8Way(in=secondHalf, out=second);
+
+        //Check for both halves being = 0
+        Or(a=first, b=second, out=whole);
+        Not(in=whole, out=zr);
+
+        //ng: if out < 0, last (leftmost) bit = 1
+        Or(a=lastBit, b=lastBit, out=ng);
 }
