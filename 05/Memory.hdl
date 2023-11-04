@@ -4,6 +4,7 @@
 // File name: projects/05/Memory.hdl
 
 /**
+Name: Curtis Kauer
  * The complete address space of the Hack computer's memory,
  * including RAM and memory-mapped I/O. 
  * The chip facilitates read and write operations, as follows:
@@ -27,5 +28,36 @@ CHIP Memory {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    //RAM16k(in[16], load, address[14], out[16])
+    //screen(in[16], address[13], load, out[16])
+    //Screen(in[16], address=address[0..12], load=load, out=screenOut);
+
+
+
+    //to figure out if address[15] = keyboard (0110 0000 0000 0000)
+    And(a=address[14], b=address[13], out=ifKeyboard);
+
+    //to figure out if address[15] = screen (0100 0000 0000 0000)
+    Not(in=address[13], out=not13);
+    And(a=address[14], b=not13, out=isScreen);
+
+    //to figure out to load into screen
+    And(a=isScreen, b=load, out=loadScreen);
+
+    //to figure out if the input is greater than 16,383
+    Or(a=isScreen, b=ifKeyboard, out=greaterThan);
+
+    Keyboard(out=isKeyboard);
+    Screen(in=in, address=address[0..12], load=loadScreen, out=ifScreen);
+    Mux16(a=ifScreen, b=isKeyboard, sel=ifKeyboard, out=currentValue);
+
+    Mux16(a=in, b=currentValue, sel=greaterThan, out=foo);
+
+    //to figure out that the input isnt greater than 16,383
+    Not(in=greaterThan, out=notGreaterThan);
+    And(a=notGreaterThan, b=load, out=toLoadRAM);
+
+    RAM16K(in=foo, load=toLoadRAM, address=address[0..13], out=ramed);
+
+    Mux4Way16(a=ramed, b=isKeyboard, c=ifScreen, d=in, sel[0]=ifKeyboard, sel[1]=isScreen, out=out);
 }
