@@ -39,5 +39,104 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+    //subject to change
+    //current idea is we jump to next instruction when 001
+    //And(a=instruction[1], b=instruction[0], out=J3andJ2);
+    //And(a=J3andJ2, b=instruction[2], out=selector);
+    Not(in=instruction[2], out=notJ1);
+    Not(in=instruction[1], out=notJ2);
+    And(a=notJ1, b=notJ2, out=notJ1andnotJ2);
+    And(a=notJ1andnotJ2, b=instruction[0], out=selector);
+    Mux16(a=ALUoutput, b=instruction, sel=selector, out=instructions);
+
+    Not(in=instruction[15], out=isA);
+    //if storing in a = d1 = 1
+    And(a=isA, b=instruction[5], out=AregisterLoad);
+    ARegister(in=instructions, load=instruction[15], out=AregisterOutput, out[0..14]=addressM);
+
+    And(a=c1Andc2, b=notC4andnotC3, out=c1Andc2AndNotc4Andc3);
+    Not(in=instruction[7], out=notC5);
+    And(a=notC5, b=notC6, out=notC5AndnotC6);
+    And(a=c1Andc2AndNotc4Andc3, b=notC5AndnotC6, out=ALUinput);
+    //And(a=instruction[15], b=instruction[12], out=ALUinput);
+    //potentially a and b might need to be swapped
+    Mux16(a=AregisterOutput, b=inM, sel=ALUinput, out=ALUYinput);
+
+    //zx = zero x (D)
+    And(a=instruction[11], b=instruction[9], out=c1ANDc3);
+    And(a=c1ANDc3, b=instruction[7], out=c1Andc3Andc5);
+    
+    Not(in=instruction[10], out=notC2);
+    Not(in=instruction[8], out=notC4);
+    Not(in=instruction[6], out=notC6);
+    And(a=notC2, b=notC4, out=notC2ANDnotC4);
+    And(a=notC2ANDnotC4, b=notC6, out=notC2ANDnotC4ANDnotC6);
+    
+    //And(a=instruction[10], b=instruction[8], out=c2ANDc4);
+    //And(a=c2ANDc4, b=instruction[6], out=c2Andc4Andc6);
+
+    And(a=c1Andc3Andc5, b=notC2ANDnotC4ANDnotC6, out=zx);
+    
+    //nx = negate x (D)
+    //x = D register
+    Not(in=instruction[11], out=notC1);
+    //Not(in=instruction[10], out=notC2);
+    And(a=notC1, b=notC2, out=notC1andnotC2);
+
+    And(a=instruction[9], b=instruction[8], out=c3Andc4);
+    And(a=c3Andc4, b=instruction[7], out=c3Andc4Andc5);
+    And(a=c3Andc4Andc5, b=instruction[6], out=c3Andc4Andc5Andc6);
+
+    And(a=notC1andnotC2, b=c3Andc4Andc5Andc6, out=nx);
+
+    //zy = zero y (A or M)
+    //subject to change but I think its the same combinatorial logic as zx
+
+    //ny = negate y (A or M)
+    And(a=instruction[11], b=instruction[10], out=c1Andc2);
+    And(a=instruction[7], b=instruction[6], out=c5Andc6);
+    And(a=c1Andc2, b=c5Andc6, out=c1Andc2Andc5Andc6);
+    
+    //Not(in=instruction[8], out=notC4);
+    Not(in=instruction[9], out=notC3);
+    And(a=notC4, b=notC3, out=notC4andnotC3);
+
+    And(a=notC4andnotC3, b=c1Andc2Andc5Andc6, out=ny);
+
+    //f = x + y (if 1) or else x & y
+    And(a=notC1andnotC2, b=notC4andnotC3, out=notC1AndnotC2AndnotC3AndnotC4);
+    And(a=notC1AndnotC2AndnotC3AndnotC4, b=notC6, out=notC1AndnotC2AndnotC3AndnotC4AndnotC6);
+    And(a=notC1AndnotC2AndnotC3AndnotC4AndnotC6, b=instruction[7], out=f);
+
+    //no = negate out output (subject to change confused onto which combination that would be)
+    And(a=notC1andnotC2, b=notC3, out=notC1andnotC2andnotC3);
+    And(a=instruction[8], b=instruction[7], out=c4Andc5);
+    And(a=c4Andc5, b=instruction[6], out=c4Andc5Andc6);
+    And(a=notC1andnotC2andnotC3, b=c4Andc5Andc6, out=no);
+
+    ALU(x=DregisterOutput, y=ALUYinput, zx=false, nx=false, zy=false, ny=false, f=false, no=false, out=ALUoutput, out=outM, zr=zr, ng=ng);
+
+    //DRegister load = 1 when d2 = 1
+    //And(a=instruction[15], b=instruction[4], out=DregisterLoad);
+    DRegister(in=ALUoutput, load=instruction[4], out=DregisterOutput);
+    //010 if out is = 0
+    //Not(in=instruction[2], out=notJ1);
+    Not(in=instruction[0], out=notJ3);
+    And(a=notJ1, b=notJ3, out=notJ1AndnotJ3);
+    And(a=notJ1AndnotJ3, b=instruction[1], out=zrJump);
+   
+    //Not(in=instruction[1], out=notJ2);
+    And(a=notJ2, b=notJ3, out=notJ2andnotJ3);
+    And(a=notJ2andnotJ3, b=instruction[2], out=ngJump);
+
+
+    //zr = out = 0
+    //ng = out < 0
+    And(a=zr, b=zrJump, out=jump1);
+    And(a=ng, b=ngJump, out=jump2);
+    Or(a=jump1, b=jump2, out=jump);
+
+
+    Not(in=jump, out=notJump);
+    PC(in=AregisterOutput, load=jump, inc=notJump, reset=reset, out[0..14]=pc);
 }
