@@ -4,6 +4,7 @@
 // File name: projects/05/Computer.hdl
 
 /**
+Name: Curtis Kauer
  * The HACK computer, including CPU, ROM and RAM.
  * When reset is 0, the program stored in the computer's ROM executes.
  * When reset is 1, the execution of the program restarts. 
@@ -19,5 +20,12 @@ CHIP Computer {
     IN reset;
 
     PARTS:
-    // Put your code here:
+
+    //Computer = ROM32K + CPU + Memory
+
+    ROM32K(address=pcValue, out=Rom32kValue);    
+    
+    CPU(inM=memoryOut, instruction=Rom32kValue, reset=reset, outM=CPUoutM, writeM=CPUwriteM, addressM=CPUaddressM, pc=pcValue);
+
+    Memory(in=CPUoutM, load=CPUwriteM, address=CPUaddressM, out=memoryOut);
 }

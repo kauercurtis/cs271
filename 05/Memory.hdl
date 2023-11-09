@@ -28,11 +28,6 @@ CHIP Memory {
     OUT out[16];
 
     PARTS:
-    //RAM16k(in[16], load, address[14], out[16])
-    //screen(in[16], address[13], load, out[16])
-    //Screen(in[16], address=address[0..12], load=load, out=screenOut);
-
-
 
     //to figure out if address[15] = keyboard (0110 0000 0000 0000)
     And(a=address[14], b=address[13], out=ifKeyboard);
@@ -51,13 +46,14 @@ CHIP Memory {
     Screen(in=in, address=address[0..12], load=loadScreen, out=ifScreen);
     Mux16(a=ifScreen, b=isKeyboard, sel=ifKeyboard, out=currentValue);
 
-    Mux16(a=in, b=currentValue, sel=greaterThan, out=foo);
+    Mux16(a=in, b=currentValue, sel=greaterThan, out=RAMinput);
 
     //to figure out that the input isnt greater than 16,383
     Not(in=greaterThan, out=notGreaterThan);
+    //figure out if we load it into the RAM
     And(a=notGreaterThan, b=load, out=toLoadRAM);
 
-    RAM16K(in=foo, load=toLoadRAM, address=address[0..13], out=ramed);
+    RAM16K(in=RAMinput, load=toLoadRAM, address=address[0..13], out=ramed);
 
-    Mux4Way16(a=ramed, b=isKeyboard, c=ifScreen, d=in, sel[0]=ifKeyboard, sel[1]=isScreen, out=out);
+    Mux4Way16(a=ramed, b=isKeyboard, c=ifScreen, d=ramed, sel[0]=ifKeyboard, sel[1]=isScreen, out=out);
 }
