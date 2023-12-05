@@ -75,7 +75,8 @@ void parse(FILE * file){
 			if (!parse_A_instruction(line, &instr.a_instruction)){
     			exit_program(EXIT_INVALID_A_INSTR, line_num, line);
  			}
- 			instr.instr_type = 0;
+ 			//instr.instr_type = 0;
+			instr.instr_type = A_TYPE_INSTRUCTION;
 		}
 		else if(is_label(line)){
 			inst_type = 'L';
