@@ -157,4 +157,20 @@ bool parse_A_instruction(const char *line, A_instruction *instr);
 */
 void parse_C_instruction(char *line, C_instruction *instr);
 
+/*
+    instruction_to_opcode - converts C instruction to opcode
+    arg1 - C_instruction instr - the C instruction instance
+    return - opcode - the 16 bit operation code
+*/
+opcode instruction_to_opcode(C_instruction instr);
+
+/*
+    assemble - assembles a collection of instructions into binary
+    arg1 - const char * file_name - the name of the HACK assembly file
+    arg2 - Instruction *instructions - an array of Instruction Instances
+    arg3 - int num_instructions - the number of Instructions in the instructions array (arg2)
+    return - void - returns nothing
+    - Creates a .hack file of the HACK assembly file
+*/
+void assemble(const char * file_name, Instruction *instructions, int num_instructions);
 #endif

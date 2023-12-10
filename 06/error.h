@@ -27,7 +27,8 @@ enum exitcode{
     EXIT_INVALID_A_INSTR,
     EXIT_INVALID_C_DEST,
     EXIT_INVALID_C_COMP,
-    EXIT_INVALID_C_JUMP
+    EXIT_INVALID_C_JUMP,
+    EXIT_INVALID_FILE
 };
 
 //function prototypes

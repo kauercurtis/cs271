@@ -16,6 +16,28 @@
 #define NUM_PREDEFINED_SYMBOLS 23
 
 /*
+    OPCODE_TO_BINARY - converts a number (opcode) into an array of binary characters
+    arg1 - opcode - the number to convert into an array of binary characters
+*/
+#define OPCODE_TO_BINARY(opcode) \
+  (opcode & 0x8000 ? '1' : '0'), \
+  (opcode & 0x4000 ? '1' : '0'), \
+  (opcode & 0x2000 ? '1' : '0'), \
+  (opcode & 0x1000 ? '1' : '0'), \
+  (opcode & 0x800 ? '1' : '0'), \
+  (opcode & 0x400 ? '1' : '0'), \
+  (opcode & 0x200 ? '1' : '0'), \
+  (opcode & 0x100 ? '1' : '0'), \
+  (opcode & 0x80 ? '1' : '0'), \
+  (opcode & 0x40 ? '1' : '0'), \
+  (opcode & 0x20 ? '1' : '0'), \
+  (opcode & 0x10 ? '1' : '0'), \
+  (opcode & 0x8 ? '1' : '0'), \
+  (opcode & 0x4 ? '1' : '0'), \
+  (opcode & 0x2 ? '1' : '0'), \
+  (opcode & 0x1 ? '1' : '0')
+
+/*
     enum symbol_id - predefined HACK label symbols with their corresponding addresses
     - R0 - R15 = 0 - 15
     - SP = 0
@@ -279,5 +301,4 @@ static inline comp_id str_to_compid(const char *s, int *a){
 
     return id;  
 }
-
 #endif

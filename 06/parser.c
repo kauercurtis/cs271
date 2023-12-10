@@ -254,12 +254,76 @@ void parse_C_instruction(char *line, C_instruction *instr){
 		instr->comp = str_to_compid(destination, &a);
 	}
 	else{
-
 		instr->dest = str_to_destid(destination);
 		instr->comp = str_to_compid(comp, &a);
-
 	}
 
 	instr->jump = str_to_jumpid(jump);
 	instr->a = a;
+}
+
+/*
+    instruction_to_opcode - converts C instruction to opcode
+    arg1 - C_instruction instr - the C instruction instance
+    return - opcode - the 16 bit operation code
+*/
+opcode instruction_to_opcode(C_instruction instr){
+	opcode op = 0;
+	op |= (7 << 13);
+	op |= (instr.a << 12);
+	op |= (instr.comp << 6);
+	op |= (instr.dest << 3);
+	op |= (instr.jump << 0);	
+	return op;
+}
+
+/*
+    assemble - assembles a collection of instructions into binary
+    arg1 - const char * file_name - the name of the HACK assembly file
+    arg2 - Instruction *instructions - an array of Instruction Instances
+    arg3 - int num_instructions - the number of Instructions in the instructions array (arg2)
+    return - void - returns nothing
+    - Creates a .hack file of the HACK assembly file
+*/
+void assemble(const char * file_name, Instruction* instructions, int num_instructions){
+	char hackFile[sizeof(file_name) + 6];
+	strcpy(hackFile, file_name);
+	strcat(hackFile, ".hack");
+
+	FILE *fin = fopen(hackFile, "w");
+
+	if(fin == NULL){
+		exit_program(EXIT_CANNOT_OPEN_FILE, hackFile);
+	}
+
+	int16_t op_code;
+	int16_t address = 16; 
+
+	for(unsigned currentInstruction = 0; currentInstruction < num_instructions; currentInstruction++){
+		if(instructions[currentInstruction].instr_type == A_TYPE_INSTRUCTION){
+
+			if(!instructions[currentInstruction].instruction_Type.a_instruction.is_addr){
+				Symbol *symbol = symtable_find(instructions[currentInstruction].instruction_Type.a_instruction.aType.label);
+
+				if(symbol == NULL){					
+					op_code = address;
+					symtable_insert(instructions[currentInstruction].instruction_Type.a_instruction.aType.label, address);
+					address++;
+				}
+				else{
+					op_code = symbol->addr;
+				}
+			}
+			else{
+				op_code = instructions[currentInstruction].instruction_Type.a_instruction.aType.address;
+			}
+		}
+		else{
+			op_code = instruction_to_opcode(instructions[currentInstruction].instruction_Type.c_instruction);
+		}
+
+		fprintf(fin, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n", OPCODE_TO_BINARY(op_code));
+	}
+
+	fclose(fin);
 }

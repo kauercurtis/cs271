@@ -29,6 +29,9 @@ int main(int argc, const char *argv[])
 	if(argc != 2){
 		exit_program(EXIT_INCORRECT_ARGUMENTS, argv[0]);
 	}
+	else if(strstr(argv[1], ".asm") == NULL){
+		exit_program(EXIT_INVALID_FILE, argv[1]);
+	}
 
 	FILE *fin = fopen(argv[1], "r");
 
@@ -41,6 +44,8 @@ int main(int argc, const char *argv[])
 	int num_instructions = parse(fin, instructions);
 
 	fclose(fin);
+
+	assemble(argv[1], instructions, num_instructions);
 
 	free(instructions);
 
